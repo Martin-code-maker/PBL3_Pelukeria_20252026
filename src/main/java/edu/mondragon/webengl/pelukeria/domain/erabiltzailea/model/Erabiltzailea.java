@@ -1,6 +1,6 @@
 package edu.mondragon.webengl.pelukeria.domain.erabiltzailea.model;
 
-import org.jspecify.annotations.Nullable;
+//import org.jspecify.annotations.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,9 +11,9 @@ import jakarta.persistence.Table;
 @Table(name = "erabiltzaileak") //Datu basean tablaren izena
 public class Erabiltzailea {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     
-    private @Nullable Integer id;
+    private Long id;
     private String izena;
     private String pasahitza;
     private String gmail;
@@ -26,10 +26,10 @@ public class Erabiltzailea {
         this.gmail = gmail;
     }
     
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
     public String getIzena() {
