@@ -6,12 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import edu.mondragon.webengl.pelukeria.domain.erabiltzailea.service.ErabiltzaileaService;
 
@@ -27,15 +23,22 @@ class WebSecurityConfig {
 		// @formatter:off
 		http
 			.authorizeHttpRequests((requests) -> requests
-				.requestMatchers("/", "/home", "/login", "/demo/**", "/pelukeria/**").permitAll()
+				// IMPORTANTE: Permitir acceso a recursos estáticos (CSS, JS, imágenes)
+				.requestMatchers("/", "/home", "/login", "/register", 
+								"/css/**", "/js/**", "/images/**", "/favicon.ico",
+								"/pelukeria/**","/webjars/**").permitAll()
 				.anyRequest().authenticated()
 			)
 			.formLogin((form) -> form
 				.loginPage("/login")
+				.defaultSuccessUrl("/home", true)  // Redirige a home después de login exitoso
 				.permitAll()
 			)
-			.logout(LogoutConfigurer::permitAll)
-			.csrf(csrf -> csrf.disable()) // IMPORTANTE: Desactiva CSRF para pruebas con curl
+			.logout((logout) -> logout
+				.logoutSuccessUrl("/home?logout")  // Redirige a home después de logout
+				.permitAll()
+			)
+			.csrf(csrf -> csrf.disable())
 			.userDetailsService(erabiltzaileaService);
 			
 		// @formatter:on
@@ -47,12 +50,4 @@ class WebSecurityConfig {
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	/*
-	@Bean
-	UserDetailsService userDetailsService(PasswordEncoder encoder) {
-		String password = encoder.encode("password");
-		UserDetails user = User.withUsername("user").password(password).roles("USER").build();
-		return new InMemoryUserDetailsManager(user);
-	}
-	 */
 }

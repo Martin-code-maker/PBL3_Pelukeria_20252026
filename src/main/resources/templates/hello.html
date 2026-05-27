@@ -1,13 +1,33 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
-    <head>
-        <title>Hello World!</title>
-    </head>
-    <body>
-        <h1 th:inline="text">Hello <span th:remove="tag" sec:authentication="name">thymeleaf</span>!</h1>
-        <form th:action="@{/logout}" method="post">
-            <input type="submit" value="Sign Out"/>
-        </form>
-    </body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title>Hello</title>
+    <!-- 
+    <link rel="stylesheet" th:href="@{webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+     -->
+</head>
+<body>
+    <div layout:fragment="content">
+        <div style="background: yellow; padding: 10px; margin: 10px;">
+            <strong>DEBUG:</strong> Este contenido viene de hello.html
+        </div>
+        <div class="container py-5">
+            <div class="card text-center">
+                <div class="card-header bg-primary-custom">
+                    <h2 class="mb-0 text-white">¡Bienvenido!</h2>
+                </div>
+                <div class="card-body py-5">
+                    <h1 class="display-4" th:inline="text">
+                        Hello <span sec:authentication="name">Usuario</span>!
+                    </h1>
+                    <p class="lead mt-3">Has iniciado sesión correctamente en Pelukeria.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
 </html>

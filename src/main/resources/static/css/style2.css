@@ -1,0 +1,75 @@
+/* style2.css - CSS para el layout2 */
+body {
+    background-color: #ff6b6b;
+}
+.layout-header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-size: 24px;
+    border-bottom: 5px solid #ff6b6b;
+    margin-bottom: 0;
+}
+
+.layout-nav {
+    background-color: #333;
+    padding: 10px;
+    text-align: center;
+}
+
+.layout-nav a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.layout-nav a:hover {
+    color: #ff6b6b;
+    text-decoration: underline;
+}
+
+.layout-main {
+    background-color: #f0f0f0;
+    min-height: 400px;
+    padding: 20px;
+    margin: 20px;
+    border: 3px solid #4CAF50;
+    border-radius: 10px;
+}
+
+.layout-footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    margin-top: 20px;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+.layout-label {
+    background-color: #ff6b6b;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.content-box {
+    background-color: white;
+    border-left: 4px solid #4CAF50;
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.highlight {
+    background-color: #ffff99;
+    padding: 10px;
+    border-radius: 5px;
+}

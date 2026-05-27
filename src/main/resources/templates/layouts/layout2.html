@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout2 - <th:block layout:fragment="title">Mi App</th:block></title>
+    
+    <!-- CSS externo -->
+    <!-- CSS del layout - estos SÍ se mantienen -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style2.css}"/>
+    
+    <!-- Fragment para que las páginas hijas añadan su propio CSS -->
+    <th:block layout:fragment="css"></th:block>
+    
+    
+    <!-- CSS inline de respaldo por si el externo falla -->
+    <style>
+        /* Este es CSS de RESERVA - solo se verá si style2.css no carga */
+        .backup-message {
+            background-color: red;
+            color: yellow;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabecera VISIBLE del layout -->
+    <div class="layout-header">
+        🔷 ESTO ES EL LAYOUT2 (header) 🔷
+        <span class="layout-label">layout2.html</span>
+    </div>
+    
+    <!-- Navegación del layout -->
+    <div class="layout-nav">
+        <a th:href="@{/}">Inicio</a>
+        <a th:href="@{/test-layout}">Test Layout</a>
+        <a th:href="@{/test-layout2}">Test Layout2</a>
+        <span style="color: #ff6b6b;">| 👈 Estos enlaces son del LAYOUT</span>
+    </div>
+    
+    <!-- Contenido PRINCIPAL - AQUÍ se inyecta hello.html -->
+    <div class="layout-main">
+        <div style="background-color: #ddd; padding: 5px; margin-bottom: 10px; font-size: 12px;">
+            ⚠️ ÁREA DEL LAYOUT: Todo lo que esté dentro de este recuadro verde es del LAYOUT
+        </div>
+        
+        <!-- FRAGMENT: Aquí se insertará el contenido de hello.html -->
+        <div layout:fragment="content">
+            <div class="content-box">
+                <strong>⚠️ CONTENIDO POR DEFECTO</strong><br>
+                Esto se ve solo si ninguna página hija proporciona contenido.
+            </div>
+        </div>
+        
+        <div style="background-color: #ddd; padding: 5px; margin-top: 10px; font-size: 12px;">
+            ⚠️ FIN DEL ÁREA DEL LAYOUT
+        </div>
+    </div>
+    
+    <!-- Footer del layout -->
+    <div class="layout-footer">
+        🔷 ESTO ES EL LAYOUT2 (footer) 🔷
+        <span class="layout-label">layout2.html</span>
+    </div>
+    
+    <!-- CSS inline para mostrar si el CSS externo falló -->
+    <div class="backup-message" id="css-status" style="display: none;">
+        ❌ ERROR: No se cargó style2.css ❌
+    </div>
+    
+    <script>
+        // Pequeño script para verificar si el CSS externo cargó
+        window.addEventListener('load', function() {
+            var header = document.querySelector('.layout-header');
+            if (header) {
+                var bgColor = window.getComputedStyle(header).backgroundColor;
+                // Si el color no es verde (#4CAF50 es rgb(76, 175, 80))
+                if (bgColor !== 'rgb(76, 175, 80)') {
+                    document.getElementById('css-status').style.display = 'block';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

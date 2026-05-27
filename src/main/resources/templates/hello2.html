@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout2}">
+<head>
+    <title>Página de Bienvenida</title>
+    <!-- 
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/extra.css}"/>
+    </th:block>
+     -->
+</head>
+<body>
+    <!-- Este es el contenido que se inyectará en layout2.html -->
+    <div layout:fragment="content">
+        <div class="content-box">
+            <h2>✅ ESTO VIENE DE hello2.html ✅</h2>
+            <p class="highlight">
+                <strong>¡Este contenido está siendo inyectado desde hello2.html!</strong>
+            </p>
+            <p>Todo lo que ves dentro de este recuadro gris con borde verde viene del archivo <strong>hello2.html</strong>.</p>
+            <p>El cabecero verde, el menú oscuro y el pie de página vienen del <strong>layout2.html</strong>.</p>
+        </div>
+        
+        <div class="content-box">
+            <h3>📊 Prueba visual</h3>
+            <ul>
+                <li>🔹 ¿Ves cabecera VERDE? → Viene del LAYOUT</li>
+                <li>🔹 ¿Ves menú GRIS? → Viene del LAYOUT</li>
+                <li>🔹 ¿Ves este recuadro? → VIENE DE hello2.html</li>
+                <li>🔹 ¿Ves pie de página GRIS? → Viene del LAYOUT</li>
+            </ul>
+        </div>
+        
+        <div class="highlight">
+            <strong>🎯 Si puedes leer esto, el layout funciona perfectamente</strong>
+        </div>
+    </div>
+</body>
+</html>

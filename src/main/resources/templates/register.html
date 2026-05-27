@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title>Registro de Usuario</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <i class="bi bi-person-plus fs-3"></i>
+                            <h3 class="mt-2">Crear Cuenta</h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <!-- Mensaje de error -->
+                            <div th:if="${param.error}" class="alert alert-danger fade-in" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                <span th:text="${param.error}">Error al registrarse</span>
+                            </div>
+                            
+                            <!-- Formulario de registro -->
+                            <form th:action="@{/register}" method="post">
+                                <div class="mb-3">
+                                    <label for="izena" class="form-label">
+                                        <i class="bi bi-person"></i> Nombre de usuario *
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="izena" 
+                                           name="izena" 
+                                           required
+                                           placeholder="Ej: juanperez">
+                                    <div class="form-text">El nombre que usarás para iniciar sesión</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="gmail" class="form-label">
+                                        <i class="bi bi-envelope"></i> Correo electrónico *
+                                    </label>
+                                    <input type="email" 
+                                           class="form-control" 
+                                           id="gmail" 
+                                           name="gmail" 
+                                           required
+                                           placeholder="ejemplo@correo.com">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="pasahitza" class="form-label">
+                                        <i class="bi bi-lock"></i> Contraseña *
+                                    </label>
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="pasahitza" 
+                                           name="pasahitza" 
+                                           required
+                                           placeholder="Mínimo 6 caracteres">
+                                    <div class="form-text">Usa una contraseña segura</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label">
+                                        <i class="bi bi-lock-fill"></i> Confirmar contraseña *
+                                    </label>
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="confirmPassword" 
+                                           name="confirmPassword" 
+                                           required
+                                           placeholder="Repite tu contraseña">
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="bi bi-check-lg"></i> Registrarse
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <hr class="my-4">
+                            
+                            <div class="text-center">
+                                <p class="mb-0">¿Ya tienes cuenta?</p>
+                                <a th:href="@{/login}" class="btn btn-outline-primary mt-2">
+                                    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
