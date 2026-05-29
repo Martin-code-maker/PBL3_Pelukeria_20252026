@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title>Reservas</title>
+    <link rel="stylesheet" th:href="@{/css/reservas.css}"/>
+</head>
+<body>
+<div layout:fragment="content">
+<div class="container py-4">
+
+    <!-- Cabecera -->
+    <div class="page-header">
+        <div>
+            <h1><i class="bi bi-calendar-check"></i> Mis Reservas</h1>
+            <p class="text-muted mb-0" style="font-size:0.9rem">Haz clic en un hueco verde para reservar</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn-mode active" id="btn-calendar" onclick="setMode('calendar')">
+                <i class="bi bi-calendar3"></i> Calendario
+            </button>
+            <button class="btn-mode" id="btn-search" onclick="setMode('search')">
+                <i class="bi bi-search"></i> Buscar disponibilidad
+            </button>
+        </div>
+    </div>
+
+    <!-- Panel búsqueda -->
+    <div class="search-panel" id="search-panel">
+        <div class="filter-row">
+            <div>
+                <label class="form-label small fw-bold">Día</label><br>
+                <select id="filter-day" class="form-select form-select-sm">
+                    <option value="">Cualquier día</option>
+                    <option>Lunes</option><option>Martes</option><option>Miércoles</option>
+                    <option>Jueves</option><option>Viernes</option><option>Sábado</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label small fw-bold">Servicios</label><br>
+                <div class="service-checks">
+                    <label class="check-label"><input type="checkbox" value="corte"       onchange="recalcFilterSummary()"> Corte <span class="text-muted" style="font-size:0.75rem">15min</span></label>
+                    <label class="check-label"><input type="checkbox" value="barba"       onchange="recalcFilterSummary()"> Barba <span class="text-muted" style="font-size:0.75rem">10min</span></label>
+                    <label class="check-label"><input type="checkbox" value="tinte"       onchange="recalcFilterSummary()"> Tinte <span class="text-muted" style="font-size:0.75rem">30min</span></label>
+                    <label class="check-label"><input type="checkbox" value="tratamiento" onchange="recalcFilterSummary()"> Tratamiento <span class="text-muted" style="font-size:0.75rem">25min</span></label>
+                </div>
+            </div>
+            <div class="d-flex flex-column justify-content-end">
+                <small id="filter-duration-label" class="text-muted">Duración: —</small>
+                <small id="filter-price-label"    class="text-muted">Total: —</small>
+            </div>
+            <button class="btn btn-primary btn-sm align-self-end" onclick="showSearchResults()">
+                <i class="bi bi-search"></i> Ver horas libres
+            </button>
+        </div>
+        <div id="search-results" style="display:none">
+            <p class="small text-muted mb-2">Horas disponibles esta semana:</p>
+            <div class="results-grid" id="search-results-grid"></div>
+        </div>
+    </div>
+
+    <!-- Sección calendario -->
+    <div id="calendar-section">
+        <div class="week-nav">
+            <button onclick="changeWeek(-1)"><i class="bi bi-chevron-left"></i></button>
+            <span id="week-label" class="fw-semibold">—</span>
+            <button onclick="changeWeek(1)"><i class="bi bi-chevron-right"></i></button>
+        </div>
+        <div class="calendar-card">
+            <div class="calendar-grid" id="calendar-grid"></div>
+        </div>
+        <div class="cal-legend">
+            <span style="color:#2e7d52"><i class="bi bi-check2"></i> Disponible</span>
+            <span style="color:#ccc"><i class="bi bi-x"></i> Ocupado</span>
+            <span style="color:#e65100"><i class="bi bi-bookmark-fill"></i> Mi reserva</span>
+            <span style="color:#bbb"><i class="bi bi-dash"></i> Cerrado</span>
+        </div>
+    </div>
+
+    <!-- Mis reservas actuales -->
+    <div class="mt-5">
+        <h4 class="text-primary-custom mb-3"><i class="bi bi-list-check"></i> Próximas citas</h4>
+        <div th:if="${#lists.isEmpty(misReservas)}" class="text-muted small">No tienes reservas aún.</div>
+        <div class="row g-3" th:each="r : ${misReservas}">
+            <div class="col-md-6">
+                <div class="card p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong th:text="${#temporals.format(r.hasiera, 'EEEE d MMM · HH:mm', new java.util.Locale('es'))}">Fecha</strong>
+                            <p class="mb-1 small text-muted" th:text="${r.zerbitzuak}">Servicios</p>
+                            <span class="badge bg-warning text-dark" th:text="${r.iraupena} + ' min'">Duración</span>
+                            <span class="badge bg-success ms-1" th:text="${r.prezioa} + ' €'">Precio</span>
+                        </div>
+                        <form th:action="@{/reservas/{id}/delete(id=${r.id})}" method="post">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('¿Cancelar esta reserva?')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal de reserva -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="closeModal(event)">
+    <div class="booking-modal">
+        <div class="modal-header">
+            <div>
+                <h2><i class="bi bi-calendar-plus"></i> Nueva reserva</h2>
+                <p id="modal-slot-label">—</p>
+            </div>
+            <button class="modal-close" onclick="closeModal()"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+            <p class="small text-muted fw-bold text-uppercase mb-2">Elige los servicios</p>
+
+            <div class="service-item" data-service="corte" onclick="toggleService(this)">
+                <input type="checkbox" value="corte">
+                <i class="bi bi-scissors fs-5 text-primary-custom"></i>
+                <span class="svc-name">Corte de pelo</span>
+                <span class="svc-meta">15 min · 15€</span>
+                <i class="bi bi-check-circle-fill svc-check ms-auto"></i>
+            </div>
+            <div class="service-item" data-service="barba" onclick="toggleService(this)">
+                <input type="checkbox" value="barba">
+                <i class="bi bi-person-bounding-box fs-5 text-primary-custom"></i>
+                <span class="svc-name">Barba</span>
+                <span class="svc-meta">10 min · 10€</span>
+                <i class="bi bi-check-circle-fill svc-check ms-auto"></i>
+            </div>
+            <div class="service-item" data-service="tinte" onclick="toggleService(this)">
+                <input type="checkbox" value="tinte">
+                <i class="bi bi-droplet-fill fs-5 text-primary-custom"></i>
+                <span class="svc-name">Tinte</span>
+                <span class="svc-meta">30 min · 30€</span>
+                <i class="bi bi-check-circle-fill svc-check ms-auto"></i>
+            </div>
+            <div class="service-item" data-service="tratamiento" onclick="toggleService(this)">
+                <input type="checkbox" value="tratamiento">
+                <i class="bi bi-flower1 fs-5 text-primary-custom"></i>
+                <span class="svc-name">Tratamiento capilar</span>
+                <span class="svc-meta">25 min · 25€</span>
+                <i class="bi bi-check-circle-fill svc-check ms-auto"></i>
+            </div>
+
+            <div class="booking-summary">
+                <div class="summary-row"><span><i class="bi bi-clock"></i> Duración</span> <strong id="summary-duration">—</strong></div>
+                <div class="summary-row"><span><i class="bi bi-tag"></i> Precio</span> <strong id="summary-price" style="color:var(--primary-color)">—</strong></div>
+                <div class="summary-row" id="summary-end-row" style="display:none">
+                    <span><i class="bi bi-clock-history"></i> Hora fin</span> <strong id="summary-end">—</strong>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-secondary btn-sm" onclick="closeModal()">Cancelar</button>
+            <button class="btn btn-primary btn-sm" id="btn-confirm" onclick="confirmBooking()" disabled>
+                <i class="bi bi-check-lg"></i> Confirmar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Formulario oculto que envía la reserva al backend -->
+<form id="booking-form" th:action="@{/reservas}" method="post" style="display:none">
+    <input type="hidden" id="form-fecha"     name="fecha">
+    <input type="hidden" id="form-hora"      name="hora">
+    <input type="hidden" id="form-servicios" name="servicios">
+    <input type="hidden" id="form-duracion"  name="duracion">
+    <input type="hidden" id="form-precio"    name="precio">
+</form>
+
+<!-- Pasar datos del servidor a JS mediante data attributes (evita problemas con th:inline) -->
+<div id="datos-reservas" style="display:none">
+    <!-- Todas las reservas ocupadas -->
+    <span th:each="r : ${todasReservas}"
+          class="slot-ocupado"
+          th:data-key="${#temporals.format(r.hasiera, 'yyyy-MM-dd') + 'T' + #temporals.format(r.hasiera, 'HH:mm')}">
+    </span>
+    <!-- Reservas del usuario actual -->
+    <span th:each="r : ${misReservas}"
+          class="slot-mio"
+          th:data-key="${#temporals.format(r.hasiera, 'yyyy-MM-dd') + 'T' + #temporals.format(r.hasiera, 'HH:mm')}">
+    </span>
+</div>
+
+<div class="toast-confirm" id="toast-confirm">
+    <i class="bi bi-check-circle-fill"></i> Reserva confirmada
+</div>
+
+<script th:src="@{/js/reservas.js}"></script>
+
+</div>
+</body>
+</html>
