@@ -127,7 +127,7 @@
     display: grid;
     grid-template-columns: 52px repeat(6, 1fr);
     overflow-y: auto;
-    max-height: 460px;
+    max-height: 520px;
 }
 
 .cal-header-cell {
@@ -147,25 +147,28 @@
 
 .cal-time-cell {
     border-right: 1px solid #eee;
-    border-bottom: 1px solid #eee;
-    font-size: 0.7rem;
+    border-bottom: 1px solid #f5f5f5;
+    font-size: 0.68rem;
     color: #aaa;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding-right: 6px;
-    min-height: 42px;
+    padding-right: 5px;
+    min-height: 16px; /* slots de 10 min: altura compacta */
+    height: 16px;
 }
 
 .cal-slot {
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f5f5f5;
     border-right: 1px solid #f0f0f0;
-    min-height: 42px;
+    min-height: 16px;
+    height: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.72rem;
-    transition: all 0.12s;
+    font-size: 0.65rem;
+    transition: background 0.1s;
+    overflow: hidden;
 }
 
 .cal-slot.available {

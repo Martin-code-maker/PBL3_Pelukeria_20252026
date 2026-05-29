@@ -35,8 +35,12 @@
                 <label class="form-label small fw-bold">Día</label><br>
                 <select id="filter-day" class="form-select form-select-sm">
                     <option value="">Cualquier día</option>
-                    <option>Lunes</option><option>Martes</option><option>Miércoles</option>
-                    <option>Jueves</option><option>Viernes</option><option>Sábado</option>
+                    <option value="0">Lunes</option>
+                    <option value="1">Martes</option>
+                    <option value="2">Miércoles</option>
+                    <option value="3">Jueves</option>
+                    <option value="4">Viernes</option>
+                    <option value="5">Sábado</option>
                 </select>
             </div>
             <div>
@@ -57,7 +61,11 @@
             </button>
         </div>
         <div id="search-results" style="display:none">
-            <p class="small text-muted mb-2">Horas disponibles esta semana:</p>
+            <div class="week-nav mb-2">
+                <button onclick="changeWeek(-1); showSearchResults()"><i class="bi bi-chevron-left"></i></button>
+                <span id="search-week-label" class="fw-semibold" style="font-size:0.875rem">—</span>
+                <button onclick="changeWeek(1); showSearchResults()"><i class="bi bi-chevron-right"></i></button>
+            </div>
             <div class="results-grid" id="search-results-grid"></div>
         </div>
     </div>
@@ -178,15 +186,17 @@
 
 <!-- Pasar datos del servidor a JS mediante data attributes (evita problemas con th:inline) -->
 <div id="datos-reservas" style="display:none">
-    <!-- Todas las reservas ocupadas -->
+    <!-- Todas las reservas: inicio + duración en minutos -->
     <span th:each="r : ${todasReservas}"
           class="slot-ocupado"
-          th:data-key="${#temporals.format(r.hasiera, 'yyyy-MM-dd') + 'T' + #temporals.format(r.hasiera, 'HH:mm')}">
+          th:data-inicio="${#temporals.format(r.hasiera, 'yyyy-MM-dd') + 'T' + #temporals.format(r.hasiera, 'HH:mm')}"
+          th:data-duracion="${r.iraupena}">
     </span>
-    <!-- Reservas del usuario actual -->
+    <!-- Reservas del usuario actual: inicio + duración -->
     <span th:each="r : ${misReservas}"
           class="slot-mio"
-          th:data-key="${#temporals.format(r.hasiera, 'yyyy-MM-dd') + 'T' + #temporals.format(r.hasiera, 'HH:mm')}">
+          th:data-inicio="${#temporals.format(r.hasiera, 'yyyy-MM-dd') + 'T' + #temporals.format(r.hasiera, 'HH:mm')}"
+          th:data-duracion="${r.iraupena}">
     </span>
 </div>
 
