@@ -96,11 +96,24 @@
             <div class="col-md-6">
                 <div class="card p-3">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div>
+                        <div class="flex-grow-1">
                             <strong th:text="${#temporals.format(r.hasiera, 'EEEE d MMM · HH:mm', new java.util.Locale('es'))}">Fecha</strong>
                             <p class="mb-1 small text-muted" th:text="${r.zerbitzuak}">Servicios</p>
                             <span class="badge bg-warning text-dark" th:text="${r.iraupena} + ' min'">Duración</span>
                             <span class="badge bg-success ms-1" th:text="${r.prezioa} + ' €'">Precio</span>
+                            <!-- Descripción si la hay -->
+                            <p th:if="${r.oharrak != null and !r.oharrak.isEmpty()}"
+                               class="mt-2 mb-1 small fst-italic text-secondary">
+                                <i class="bi bi-chat-left-text"></i>
+                                <span th:text="${r.oharrak}">Descripción</span>
+                            </p>
+                            <!-- Imagen de referencia si la hay -->
+                            <div th:if="${r.irudiPath != null}">
+                                <img th:src="@{/uploads/{f}(f=${r.irudiPath})}"
+                                     alt="Foto de referencia"
+                                     style="max-height:80px; border-radius:6px; border:1px solid #ddd; margin-top:6px; cursor:pointer;"
+                                     onclick="this.style.maxHeight = this.style.maxHeight === 'none' ? '80px' : 'none'">
+                            </div>
                         </div>
                         <form th:action="@{/reservas/{id}/delete(id=${r.id})}" method="post">
                             <button type="submit" class="btn btn-sm btn-outline-danger"
@@ -165,6 +178,30 @@
                     <span><i class="bi bi-clock-history"></i> Hora fin</span> <strong id="summary-end">—</strong>
                 </div>
             </div>
+
+            <!-- Descripción e imagen (opcionales) -->
+            <hr class="my-3">
+            <p class="small text-muted fw-bold text-uppercase mb-2">Detalles adicionales (opcional)</p>
+
+            <label class="form-label small" for="modal-oharrak">
+                <i class="bi bi-chat-left-text"></i> Descripción del corte que quieres
+            </label>
+            <textarea id="modal-oharrak" class="form-control form-control-sm mb-3"
+                      rows="3" maxlength="500"
+                      placeholder="Ej: Degradado en los laterales, dejar largo arriba..."></textarea>
+
+            <label class="form-label small" for="modal-imagen">
+                <i class="bi bi-image"></i> Foto de referencia (jpg, png — máx. 5MB)
+            </label>
+            <input type="file" id="modal-imagen" class="form-control form-control-sm"
+                   accept="image/jpeg,image/png,image/webp">
+            <!-- Preview de la imagen seleccionada -->
+            <div id="imagen-preview" class="mt-2" style="display:none">
+                <img id="imagen-preview-img" src="" alt="Preview"
+                     style="max-height:120px; border-radius:8px; border:1px solid #ddd;">
+                <button type="button" class="btn btn-sm btn-link text-danger p-0 ms-2"
+                        onclick="clearImagen()"><i class="bi bi-x-circle"></i> Quitar</button>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="btn btn-outline-secondary btn-sm" onclick="closeModal()">Cancelar</button>
@@ -175,13 +212,17 @@
     </div>
 </div>
 
-<!-- Formulario oculto que envía la reserva al backend -->
-<form id="booking-form" th:action="@{/reservas}" method="post" style="display:none">
+<!-- Formulario oculto — multipart/form-data para poder enviar la imagen -->
+<form id="booking-form" th:action="@{/reservas}" method="post"
+      enctype="multipart/form-data" style="display:none">
     <input type="hidden" id="form-fecha"     name="fecha">
     <input type="hidden" id="form-hora"      name="hora">
     <input type="hidden" id="form-servicios" name="servicios">
     <input type="hidden" id="form-duracion"  name="duracion">
     <input type="hidden" id="form-precio"    name="precio">
+    <input type="hidden" id="form-oharrak"   name="oharrak">
+    <!-- El file input real está dentro del formulario para que se envíe -->
+    <input type="file"   id="form-imagen"    name="imagen" style="display:none">
 </form>
 
 <!-- Pasar datos del servidor a JS mediante data attributes (evita problemas con th:inline) -->

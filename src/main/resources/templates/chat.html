@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title>Chat</title>
+    <link rel="stylesheet" th:href="@{/css/chat.css}"/>
+</head>
+<body>
+<div layout:fragment="content">
+<div class="container py-4">
+
+    <div class="chat-wrapper">
+        <div class="chat-header">
+            <i class="bi bi-chat-dots-fill"></i> Chat de Pelukeria
+            <span class="chat-status" id="chat-status">Conectando...</span>
+        </div>
+
+        <!-- Mensajes -->
+        <div class="chat-messages" id="chat-messages"></div>
+
+        <!-- Input -->
+        <div class="chat-input-bar">
+            <input type="text" id="msg-input" class="chat-input"
+                   placeholder="Escribe un mensaje..." maxlength="300"
+                   onkeydown="if(event.key==='Enter') enviarMensaje()">
+            <button class="chat-send-btn" onclick="enviarMensaje()">
+                <i class="bi bi-send-fill"></i>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<!-- Pasar el nombre del usuario al JS -->
+<div id="user-data"
+     th:data-username="${#authentication.name}"
+     style="display:none"></div>
+
+<!-- SockJS + STOMP (necesarios para WebSockets con Spring) -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script th:src="@{/js/chat.js}"></script>
+
+</div>
+</body>
+</html>

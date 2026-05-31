@@ -212,6 +212,10 @@ function openModal(date, hora, cell) {
         item.querySelector("input").checked = false;
     });
 
+    // Limpiar descripción e imagen al abrir
+    document.getElementById("modal-oharrak").value = "";
+    clearImagen();
+
     updateModalSummary();
     document.getElementById("modal-backdrop").classList.add("visible");
 }
@@ -235,6 +239,29 @@ function closeModal(e) {
         if (selectedCell) selectedCell.classList.remove("selected");
         selectedCell = null;
     }
+}
+
+// Preview de imagen seleccionada
+document.addEventListener("DOMContentLoaded", function() {
+    const inputModal = document.getElementById("modal-imagen");
+    if (inputModal) {
+        inputModal.addEventListener("change", function() {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById("imagen-preview-img").src = e.target.result;
+                document.getElementById("imagen-preview").style.display = "block";
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+});
+
+function clearImagen() {
+    document.getElementById("modal-imagen").value = "";
+    document.getElementById("imagen-preview").style.display = "none";
+    document.getElementById("imagen-preview-img").src = "";
 }
 
 function toggleService(item) {
@@ -287,6 +314,17 @@ function confirmBooking() {
     document.getElementById("form-servicios").value = servicios;
     document.getElementById("form-duracion").value  = duracion;
     document.getElementById("form-precio").value    = precio;
+    document.getElementById("form-oharrak").value   = document.getElementById("modal-oharrak").value;
+
+    // Copiar el fichero del input del modal al input oculto del formulario
+    const modalFile = document.getElementById("modal-imagen");
+    const formFile  = document.getElementById("form-imagen");
+    if (modalFile.files.length > 0) {
+        const dt = new DataTransfer();
+        dt.items.add(modalFile.files[0]);
+        formFile.files = dt.files;
+    }
+
     document.getElementById("booking-form").submit();
 }
 

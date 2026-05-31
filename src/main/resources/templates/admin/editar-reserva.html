@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head><title>Editar Reserva</title></head>
+<body>
+<div layout:fragment="content">
+<div class="container py-4" style="max-width:500px">
+
+    <h2 class="text-primary-custom mb-4"><i class="bi bi-clock"></i> Cambiar hora de reserva</h2>
+
+    <div class="card p-3 mb-3">
+        <p class="mb-1"><strong>Cliente:</strong> <span th:text="${reserva.erabiltzailea.izena}"></span></p>
+        <p class="mb-1"><strong>Servicios:</strong> <span th:text="${reserva.zerbitzuak}"></span></p>
+        <p class="mb-0"><strong>Hora actual:</strong>
+            <span th:text="${#temporals.format(reserva.hasiera, 'dd/MM/yyyy HH:mm')}"></span>
+        </p>
+    </div>
+
+    <form th:action="@{/admin/reservas/{id}/editar(id=${reserva.id})}" method="post">
+        <div class="mb-3">
+            <label class="form-label">Nueva fecha</label>
+            <input type="date" name="fecha" class="form-control" required
+                   th:value="${#temporals.format(reserva.hasiera, 'yyyy-MM-dd')}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Nueva hora</label>
+            <input type="time" name="hora" class="form-control" required step="600"
+                   th:value="${#temporals.format(reserva.hasiera, 'HH:mm')}">
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-lg"></i> Guardar y notificar al cliente
+            </button>
+            <a th:href="@{/admin}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </form>
+
+</div>
+</div>
+</body>
+</html>

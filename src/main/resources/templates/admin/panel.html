@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head><title>Panel Admin</title></head>
+<body>
+<div layout:fragment="content">
+<div class="container py-4">
+
+    <h1 class="text-primary-custom mb-4"><i class="bi bi-shield-check"></i> Panel de Administración</h1>
+
+    <!-- ===== SERVICIOS ===== -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-scissors"></i> Servicios</span>
+            <a th:href="@{/admin/servicios/nuevo}" class="btn btn-sm btn-light">
+                <i class="bi bi-plus-circle"></i> Nuevo servicio
+            </a>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Icono</th><th>Nombre</th><th>Clave</th>
+                        <th>Duración</th><th>Precio</th><th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="s : ${servicios}">
+                        <td><i th:class="${'bi ' + s.ikonoa} + ' fs-5'"></i></td>
+                        <td th:text="${s.izena}">Nombre</td>
+                        <td><code th:text="${s.kodea}">clave</code></td>
+                        <td th:text="${s.iraupena} + ' min'">min</td>
+                        <td th:text="${s.prezioa} + ' €'">€</td>
+                        <td>
+                            <a th:href="@{/admin/servicios/{id}/editar(id=${s.id})}"
+                               class="btn btn-sm btn-outline-primary me-1">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <form th:action="@{/admin/servicios/{id}/eliminar(id=${s.id})}"
+                                  method="post" class="d-inline"
+                                  onsubmit="return confirm('¿Eliminar este servicio?')">
+                                <button class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== TODAS LAS RESERVAS ===== -->
+    <div class="card">
+        <div class="card-header">
+            <i class="bi bi-calendar-check"></i> Todas las reservas
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Cliente</th><th>Fecha y hora</th><th>Servicios</th>
+                        <th>Duración</th><th>Precio</th><th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="r : ${todasReservas}">
+                        <td th:text="${r.erabiltzailea.izena}">Cliente</td>
+                        <td th:text="${#temporals.format(r.hasiera, 'dd/MM/yyyy HH:mm')}">Fecha</td>
+                        <td th:text="${r.zerbitzuak}">Servicios</td>
+                        <td th:text="${r.iraupena} + ' min'">min</td>
+                        <td th:text="${r.prezioa} + ' €'">€</td>
+                        <td>
+                            <a th:href="@{/admin/reservas/{id}/editar(id=${r.id})}"
+                               class="btn btn-sm btn-outline-primary me-1" title="Cambiar hora">
+                                <i class="bi bi-clock"></i>
+                            </a>
+                            <form th:action="@{/admin/reservas/{id}/eliminar(id=${r.id})}"
+                                  method="post" class="d-inline"
+                                  onsubmit="return confirm('¿Cancelar esta reserva? Se notificará al cliente.')">
+                                <button class="btn btn-sm btn-outline-danger" title="Cancelar reserva">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(todasReservas)}">
+                        <td colspan="6" class="text-center text-muted py-3">No hay reservas</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</div>
+</body>
+</html>
